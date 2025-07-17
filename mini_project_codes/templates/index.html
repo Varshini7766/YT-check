@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightTube</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3A506B;
+            --secondary-color: #5BC0BE;
+            --background-color: #FFFFFF;
+            --text-color: #1C2541;
+            --accent-color: #6FFFE9;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+        .hero {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn:hover {
+            background-color: #04b8a8;
+            transform: translateY(-2px);
+        }
+        .analysis-form {
+            background-color: #f0f0f0;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .analysis-form h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group input[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        .results {
+            margin-top: 2rem;
+            background-color: #f0f0f0;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .results h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        .chart {
+            width: 100%;
+            height: 300px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            margin-top: 1rem;
+            border-radius: 5px;
+        }
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .theme-switch:hover {
+            background-color: #04b8a8;
+        }
+        .dark-mode {
+            --primary-color: #BB86FC;
+            --secondary-color: #3700B3;
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --accent-color: #03DAC6;
+        }
+        .intro {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+            padding: 2rem;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .intro-text {
+            flex: 1;
+            padding-right: 2rem;
+        }
+        .intro-image {
+            flex: 1;
+            text-align: center;
+        }
+        .intro-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .history {
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .history h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        .history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .history li {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .feedback {
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .feedback h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#analysis">Analyze</a></li>
+                    <li><a href="#history">History</a></li>
+                    <li><a href="#feedback">Customer Feedback</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="home" class="hero">
+            <h1>Welcome to InsightTube</h1>
+            <p>Discover the sentiment behind YouTube comments</p>
+            <a href="#analysis" class="btn">Get Started</a>
+        </section>
+
+        <section class="intro">
+            <div class="intro-text">
+                <h2>Uncover the Emotions in YouTube Comments</h2>
+                <p>InsightTube is your go-to tool for analyzing the sentiment of YouTube video comments. Whether you're a content creator, marketer, or curious viewer, our advanced AI-powered sentiment analysis provides valuable insights into audience reactions and engagement.</p>
+            </div>
+            <div class="intro-image">
+                <img src="https://media.istockphoto.com/id/2173952730/photo/video-streaming-on-internet-media-watching-live-stream-live-digital-multimedia-player-digital.jpg?b=1&s=612x612&w=0&k=20&c=9mTqVWXcQFy2msJ4ZF_Ys326ZsXJQqjZcwLNuhRDFGw=" alt="InsightTube Illustration">
+            </div>
+        </section>
+
+        <section id="analysis" class="analysis-form">
+            <h2>Analyze YouTube Video</h2>
+            <form action="/analyze" method="post">
+                <div class="form-group">
+                    <label for="video-id">Enter YouTube Video ID or URL:</label>
+                    <input type="text" id="video-id" name="video_id" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Analyze Sentiment">
+                </div>
+            </form>
+        </section>
+
+        <section id="history" class="history">
+            <h2>Analysis History</h2>
+            <ul id="history-list">
+                <!-- History items will be dynamically added here -->
+            </ul>
+        </section>
+
+        <section id="feedback" class="feedback">
+            <h2>Customer Feedback</h2>
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc43Teb3Ttj2rVlIR6OL-XEVxjZhZRxBZfTgC_IgfuTPoxfXA/viewform?usp=header" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 InsightTube. All rights reserved.</p>
+    </footer>
+
+    <button class="theme-switch" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.theme-switch i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        }
+
+        // Function to add a video to the history
+        function addToHistory(videoId, videoTitle) {
+            const historyList = document.getElementById('history-list');
+            const listItem = document.createElement('li');
+            listItem.textContent = `${videoTitle} (ID: ${videoId})`;
+            historyList.appendChild(listItem);
+
+            // Store in local storage
+            const history = JSON.parse(localStorage.getItem('videoHistory') || '[]');
+            history.push({ id: videoId, title: videoTitle });
+            localStorage.setItem('videoHistory', JSON.stringify(history));
+        }
+
+        // Load history from local storage on page load
+        window.onload = function() {
+            const history = JSON.parse(localStorage.getItem('videoHistory') || '[]');
+            const historyList = document.getElementById('history-list');
+            history.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.title} (ID: ${item.id})`;
+                historyList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
+

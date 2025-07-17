@@ -1,0 +1,1 @@
+  web: gunicorn mini_project_codes.app:app

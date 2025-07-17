@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - InsightTube</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Add the same styles as in the index.html file */
+        /* ... (copy all styles from index.html) ... */
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#analysis">Analyze</a></li>
+                    <li><a href="#history">History</a></li>
+                    <li><a href="#feedback">Customer Feedback</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="results" class="results">
+            <h2>Analysis Results for: {{ results.video_title }}</h2>
+            <div id="sentiment-summary">
+                {% for sentiment, percentage in results.sentiment_percentages.items() %}
+                <div>
+                    <h3>{{ sentiment }}: {{ percentage|round(2) }}%</h3>
+                    <div style="width: 100%; background-color: #e0e0e0; border-radius: 10px; overflow: hidden;">
+                        <div style="width: {{ percentage }}%; height: 20px; background-color: 
+                            {% if sentiment == 'Positive' %}#4CAF50
+                            {% elif sentiment == 'Negative' %}#F44336
+                            {% else %}#FFC107{% endif %};">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <h3>Pie Chart</h3>
+            <img src="data:image/png;base64,{{ results.pie_chart }}" alt="Sentiment Distribution Pie Chart" style="max-width: 100%; height: auto;">
+            <h3>Bar Chart</h3>
+            <img src="data:image/png;base64,{{ results.bar_chart }}" alt="Sentiment Distribution Bar Chart" style="max-width: 100%; height: auto;">
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 InsightTube. All rights reserved.</p>
+    </footer>
+
+    <button class="theme-switch" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.theme-switch i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        }
+
+        // Add the current video to history
+        addToHistory('{{ results.video_id }}', '{{ results.video_title }}');
+
+        function addToHistory(videoId, videoTitle) {
+            const history = JSON.parse(localStorage.getItem('videoHistory') || '[]');
+            history.push({ id: videoId, title: videoTitle });
+            localStorage.setItem('videoHistory', JSON.stringify(history));
+        }
+    </script>
+</body>
+</html>
+
