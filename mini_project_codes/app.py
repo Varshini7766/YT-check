@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 import os
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from googleapiclient.discovery import build
 from textblob import TextBlob
@@ -9,6 +11,7 @@ import base64
 import io
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
+import re
 
 app = Flask(__name__)
 
@@ -35,7 +38,8 @@ def get_video_details(video_id):
 
 def get_comments_page(youtube, video_id, page_token=None):
     try:
-        return youtube.commentThreads().list(
+        print(f"Fetching comments for video_id: {video_id}")
+        response = youtube.commentThreads().list(
             part='snippet',
             videoId=video_id,
             textFormat='plainText',
@@ -43,9 +47,17 @@ def get_comments_page(youtube, video_id, page_token=None):
             pageToken=page_token,
             fields='items(snippet(topLevelComment(snippet(textDisplay)))),nextPageToken'
         ).execute()
+        print(f"API response: {response}")
+        return response
     except Exception as e:
         print(f"Error fetching comments: {e}")
-        return None
+        return {"error": str(e)}
+
+def extract_video_id(url_or_id):
+    # Handles various YouTube URL formats
+    regex = r"(?:v=|\/)([0-9A-Za-z_-]{11}).*"
+    match = re.search(regex, url_or_id)
+    return match.group(1) if match else url_or_id  # fallback to input if not a URL
 
 def get_video_comments(video_id, max_comments=500):
     comments = []
@@ -54,8 +66,9 @@ def get_video_comments(video_id, max_comments=500):
     while len(comments) < max_comments:
         try:
             response = get_comments_page(youtube, video_id, next_page_token)
-            if not response:
-                break
+            if not response or (isinstance(response, dict) and response.get("error")):
+                print(f"No response or error for video_id: {video_id}, response: {response}")
+                return [], response.get("error") if isinstance(response, dict) else None
 
             page_comments = [
                 item['snippet']['topLevelComment']['snippet']['textDisplay']
@@ -69,9 +82,9 @@ def get_video_comments(video_id, max_comments=500):
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            break
-
-    return comments[:max_comments]
+            return [], str(e)
+    print(f"Total comments fetched: {len(comments)} for video_id: {video_id}")
+    return comments[:max_comments], None
 
 def analyze_sentiment_batch(comments, batch_size=100):
     sentiments = []
@@ -111,17 +124,19 @@ def index():
 
 @app.route('/analyze', methods=['POST'])
 def analyze_video_sentiment():
-    video_id = request.form['video_id']
-    
+    video_input = request.form['video_id']
+    video_id = extract_video_id(video_input)
+    print(f"Extracted video_id: {video_id}")
     with ThreadPoolExecutor() as executor:
         future_title = executor.submit(get_video_details, video_id)
         future_comments = executor.submit(get_video_comments, video_id)
         
         video_title = future_title.result()
-        comments = future_comments.result()
+        comments, error_message = future_comments.result()
 
     if not comments:
-        return jsonify({"error": "No comments found or error occurred."}), 400
+        print(f"No comments found or error occurred for video_id: {video_id}, error: {error_message}")
+        return jsonify({"error": f"No comments found or error occurred. {error_message}"}), 400
 
     sentiments = analyze_sentiment_batch(comments)
     

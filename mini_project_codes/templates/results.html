@@ -7,13 +7,131 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Add the same styles as in the index.html file */
-        /* ... (copy all styles from index.html) ... */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fa;
+            color: #22223b;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto 0 auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        header {
+            background-color: #3A506B;
+            color: white;
+            padding: 1rem 0;
+            border-radius: 16px 16px 0 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: #6FFFE9;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            font-size: 2rem;
+        }
+        #sentiment-summary {
+            margin: 2rem 0 2.5rem 0;
+        }
+        #sentiment-summary > div {
+            margin-bottom: 1.5rem;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 28px;
+            margin-bottom: 0.5rem;
+        }
+        .progress-bar {
+            height: 28px;
+            border-radius: 10px 0 0 10px;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #fff;
+            font-size: 1rem;
+            padding-left: 12px;
+            transition: width 0.6s cubic-bezier(.4,0,.2,1);
+        }
+        .progress-bar.positive { background-color: #4CAF50; }
+        .progress-bar.neutral { background-color: #FFC107; color: #22223b; }
+        .progress-bar.negative { background-color: #F44336; }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+        .chart-card {
+            background: #f7f9fa;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 1.5rem;
+            flex: 1 1 350px;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart-card img {
+            max-width: 100%;
+            height: auto;
+        }
+        footer {
+            background-color: #3A506B;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            border-radius: 0 0 16px 16px;
+            margin-top: 2rem;
+        }
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #6FFFE9;
+            color: #1C2541;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1000;
+        }
+        .theme-switch:hover {
+            background-color: #04b8a8;
+        }
+        @media (max-width: 1000px) {
+            .container { max-width: 98vw; }
+            .charts { flex-direction: column; align-items: center; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
+    <div class="container">
+        <header>
             <nav>
                 <ul>
                     <li><a href="/">Home</a></li>
@@ -22,34 +140,41 @@
                     <li><a href="#feedback">Customer Feedback</a></li>
                 </ul>
             </nav>
-        </div>
-    </header>
+        </header>
 
-    <main class="container">
-        <section id="results" class="results">
+        <main>
             <h2>Analysis Results for: {{ results.video_title }}</h2>
             <div id="sentiment-summary">
                 {% for sentiment, percentage in results.sentiment_percentages.items() %}
-                    {% set bar_color = '#4CAF50' if sentiment == 'Positive' else '#F44336' if sentiment == 'Negative' else '#FFC107' %}
+                    {% set bar_color = 'positive' if sentiment == 'Positive' else 'negative' if sentiment == 'Negative' else 'neutral' %}
                     <div>
-                        <h3>{{ sentiment }}: {{ percentage|round(2) }}%</h3>
-                        <div style="width: 100%; background-color: #e0e0e0; border-radius: 10px; overflow: hidden;">
-                            <div style="width: {{ percentage|round(2) }}%; height: 20px; background-color: {{ bar_color }};">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 500;">{{ sentiment }}: {{ percentage|round(2) }}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar {{ bar_color }}" style="width: {{ percentage|round(2) }}%;">
+                                {% if percentage > 10 %}{{ percentage|round(1) }}%{% endif %}
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-            <h3>Pie Chart</h3>
-            <img src="data:image/png;base64,{{ results.pie_chart }}" alt="Sentiment Distribution Pie Chart" style="max-width: 100%; height: auto;">
-            <h3>Bar Chart</h3>
-            <img src="data:image/png;base64,{{ results.bar_chart }}" alt="Sentiment Distribution Bar Chart" style="max-width: 100%; height: auto;">
-        </section>
-    </main>
+            <div class="charts">
+                <div class="chart-card">
+                    <h3>Pie Chart</h3>
+                    <img src="data:image/png;base64,{{ results.pie_chart }}" alt="Sentiment Distribution Pie Chart">
+                </div>
+                <div class="chart-card">
+                    <h3>Bar Chart</h3>
+                    <img src="data:image/png;base64,{{ results.bar_chart }}" alt="Sentiment Distribution Bar Chart">
+                </div>
+            </div>
+        </main>
 
-    <footer>
-        <p>&copy; 2023 InsightTube. All rights reserved.</p>
-    </footer>
+        <footer>
+            <p>&copy; 2023 InsightTube. All rights reserved.</p>
+        </footer>
+    </div>
 
     <button class="theme-switch" onclick="toggleTheme()">
         <i class="fas fa-moon"></i>
@@ -64,9 +189,10 @@
         }
 
         // Add the current video to history
-        addToHistory('{{ results.video_id }}', '{{ results.video_title }}');
+        addToHistory('{{ results.video_id if results.video_id is defined else "" }}', '{{ results.video_title }}');
 
         function addToHistory(videoId, videoTitle) {
+            if (!videoId) return;
             const history = JSON.parse(localStorage.getItem('videoHistory') || '[]');
             history.push({ id: videoId, title: videoTitle });
             localStorage.setItem('videoHistory', JSON.stringify(history));
