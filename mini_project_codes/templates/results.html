@@ -30,16 +30,14 @@
             <h2>Analysis Results for: {{ results.video_title }}</h2>
             <div id="sentiment-summary">
                 {% for sentiment, percentage in results.sentiment_percentages.items() %}
-                <div>
-                    <h3>{{ sentiment }}: {{ percentage|round(2) }}%</h3>
-                    <div style="width: 100%; background-color: #e0e0e0; border-radius: 10px; overflow: hidden;">
-                        <div style="width: {{ percentage }}%; height: 20px; background-color: 
-                            {% if sentiment == 'Positive' %}#4CAF50
-                            {% elif sentiment == 'Negative' %}#F44336
-                            {% else %}#FFC107{% endif %};">
+                    {% set bar_color = '#4CAF50' if sentiment == 'Positive' else '#F44336' if sentiment == 'Negative' else '#FFC107' %}
+                    <div>
+                        <h3>{{ sentiment }}: {{ percentage|round(2) }}%</h3>
+                        <div style="width: 100%; background-color: #e0e0e0; border-radius: 10px; overflow: hidden;">
+                            <div style="width: {{ percentage|round(2) }}%; height: 20px; background-color: {{ bar_color }};">
+                            </div>
                         </div>
                     </div>
-                </div>
                 {% endfor %}
             </div>
             <h3>Pie Chart</h3>
